@@ -1,0 +1,15 @@
+[monitoring]
+enabled = true
+bind-address = "0.0.0.0"
+bind-port = "9080"
+
+[logging]
+
+[input]
+kind = "kafka"
+
+[inputkafka]
+topics = ["onetopic", "two_topic"]
+bootstrap_servers = "192.168.16:9092, localhost:8800"
+
+[output]
