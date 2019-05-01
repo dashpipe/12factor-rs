@@ -3,9 +3,10 @@ use hyper::rt::{self, Future};
 use hyper::{Body, Request, Response, Server, StatusCode};
 use hyper_router::{Route, RouterBuilder, RouterService};
 use prometheus::{Encoder, TextEncoder};
+use serde::Deserialize;
 use std::net::SocketAddr;
 use std::string::FromUtf8Error;
-use serde::{Deserialize};
+use std::thread;
 
 fn alive_check(_: Request<Body>) -> Response<Body> {
     let body = "alive and running";
@@ -59,14 +60,14 @@ fn build_router_service() -> Result<RouterService, std::io::Error> {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct MonitoringConfig{
+pub struct MonitoringConfig {
     enabled: bool,
     bind_addr: String,
     bind_port: String,
 }
 
-impl Default for MonitoringConfig{
-    fn default() -> Self { 
+impl Default for MonitoringConfig {
+    fn default() -> Self {
         MonitoringConfig {
             enabled: true,
             bind_addr: "0.0.0.0".to_string(),
@@ -82,16 +83,18 @@ pub fn start_beacon<'a>(config: &MonitoringConfig) {
         return;
     }
     let bind_addr = format!("{}:{}", config.bind_addr, config.bind_port);
-    let addr: SocketAddr = bind_addr.parse()
-                                    .expect("Inavalid socket address, cannot start server");
+    let addr: SocketAddr = bind_addr
+        .parse()
+        .expect("Inavalid socket address, cannot start server");
     info!("Attempting to start beacon server at {}", bind_addr);
-    rt::run(rt::lazy(move || {
-        let server = Server::bind(&addr)
-            .serve(build_router_service)
-            .map_err(|e| error!("server error: {}", e));
+    thread::spawn(move || {
+        rt::run(rt::lazy(move || {
+            let server = Server::bind(&addr)
+                .serve(build_router_service)
+                .map_err(|e| error!("server error: {}", e));
 
-        rt::spawn(server);
-        Ok(())
-    }));
+            rt::spawn(server);
+            Ok(())
+        }));
+    });
 }
-
