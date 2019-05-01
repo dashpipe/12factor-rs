@@ -1,6 +1,6 @@
 [package]
 name = "twelve_factor"
-version = "0.1.0"
+version = "0.0.1"
 authors = ["esolis <esolis@homeaway.com>"]
 edition = "2018"
 description = "A mashup of libraries that produce a 12factor compliat application with logs, metrcs, secrets, etc"
