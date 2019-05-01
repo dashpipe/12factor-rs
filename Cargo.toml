@@ -3,6 +3,12 @@ name = "twelve_factor"
 version = "0.1.0"
 authors = ["esolis <esolis@homeaway.com>"]
 edition = "2018"
+description = "A mashup of libraries that produce a 12factor compliat application with logs, metrcs, secrets, etc"
+repository = "https://github.com/dashpipe/12factor-rs"
+readme = "README.md"
+keywords = ["observability"]
+categories = ["Configuration"]
+license = "Apache-2.0"
 
 [dependencies]
 config = "0.9"
